@@ -23,7 +23,9 @@ fun initDB() {
 
 fun Application.main() {
     install(Compression)
-    install(CORS)
+    install(CORS) {
+        anyHost()
+    }
     install(DefaultHeaders)
     install(CallLogging)
     install(ContentNegotiation) {
@@ -40,30 +42,32 @@ fun Application.main() {
         route("/api") {
             route("/messages") {
 
+                val messagesController = MessagesController()
+
                 get("/") {
-                    call.respond(MessagesController().index())
+                    call.respond(messagesController.index())
                 }
 
                 post("/") {
                     val message = call.receive<Message>()
                     logger.debug { message }
-                    call.respond(MessagesController().create(message))
+                    call.respond(messagesController.create(message))
                 }
 
                 get("/{id}") {
                     val id = call.parameters["id"]!!.toInt()
-                    call.respond(MessagesController().show(id))
+                    call.respond(messagesController.show(id))
                 }
 
                 put("/{id}") {
                     val id = call.parameters["id"]!!.toInt()
                     val message = call.receive<Message>()
-                    call.respond(MessagesController().update(id, message))
+                    call.respond(messagesController.update(id, message))
                 }
 
                 delete("/{id}") {
                     val id = call.parameters["id"]!!.toInt()
-                    call.respond(MessagesController().delete(id))
+                    call.respond(messagesController.delete(id))
                 }
             }
         }
