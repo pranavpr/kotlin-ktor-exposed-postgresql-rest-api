@@ -7,6 +7,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import java.text.*
 import org.jetbrains.exposed.sql.*
+import com.zaxxer.hikari.*
 import io.ktor.request.receive
 import net.pranavprakash.app.controller.MessagesController
 import net.pranavprakash.app.model.Message
@@ -16,9 +17,9 @@ import mu.*
     Init Postgresql database connection
  */
 fun initDB() {
-    val url = "jdbc:postgresql://localhost/testdb?user=pranavprakash&password="
-    val driver = "org.postgresql.Driver"
-    Database.connect(url, driver)
+    val config = HikariConfig("/hikari.properties")
+    val ds = HikariDataSource(config)
+    Database.connect(ds)
 }
 
 fun Application.main() {
